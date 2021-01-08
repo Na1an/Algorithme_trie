@@ -1,0 +1,410 @@
+#!/usr/local/bin/python3
+
+#
+# NB: T est toujours considéré trié !
+#
+
+############################################################
+# Exercice 2.1
+#
+# Effectue une recherche dichotomique de x dans T 111
+#
+
+def trouve(T, x):
+  # A REMPLIR/MODIFIER !!
+  bas = 0
+  haut = len(T)-1
+
+  while(T[bas]<=x and T[haut]> x):
+    m = (bas+haut)//2
+    if(x == T[m]):
+      return True
+    if(haut-bas)<=1:
+      return False
+    elif x >= T[m]:
+      bas = m
+    elif x<= T[m]:
+      haut = m
+
+
+
+############################################################
+# Exercice 2.2
+#
+# Effectue une recherche dichotomique de x dans T
+# et le nombre de comparaisons effectees
+
+def trouveOps(T,x):
+  # A REMPLIR/MODIFIER !
+  bas = 0
+  haut = len(T)-1
+  ops = 0
+
+  while(T[bas]<=x and T[haut]> x):
+    m = (bas+haut)//2
+    ops += 2
+    if(x == T[m]):
+      return True,ops
+    if(haut-bas)<=1:
+      ops += 1
+      return False,ops
+    elif x >= T[m]:
+      bas = m
+      ops += 1
+    elif x<= T[m]:
+      haut = m
+      ops += 1
+
+
+
+############################################################
+# Exercice 2.3
+#
+# Renvoie l'indice de la première occurrence de x dans T
+# et False si il n'y en a aucune
+#
+# Aide: vous pouvez utiliser l'argument optionnel 'debut'
+#   plutôt que de définir une fonction auxiliaire
+#
+
+def trouvePremier(T, x,debut=0) :
+  # A REMPLIR/MODIFIER !!
+  bas = 0
+  haut = len(T)-1
+  if(len(T) == 0) :
+      return False
+  if(len(T) == 1) :
+    if x == T[0]:
+      return 0
+    else:
+      return False
+
+  while(T[bas]<=x and T[haut]>= x): #T[bas] <= x <= T[haut]
+    m = (bas+haut)//2
+    if x <= T[m]: # <- fait qu'on renvoie la première occurrence
+      haut = m    #T[bas] <= x <= T[haut]
+    elif x>= T[m]:
+      bas = m     #T[bas] <= x <= T[haut]
+    if(haut-bas)<=1:  #T[bas] <= x <= T[haut]
+      if T[bas] == x : return bas
+      elif T[haut] == x: return haut
+      else : return False
+
+  return False
+
+
+############################################################
+# Exercice 2.4
+#
+# Renvoie l'indice de la première occurrence de x dans T
+# et False si il n'y en a aucune
+# ainsi que le nombre de comparaisons nécessaires
+#
+  
+
+def trouvePremierOps(T, x, debut=0) :
+  # À remplir
+  bas = 0
+  haut = len(T)-1
+  ops = 0
+  if(len(T) == 0) : 
+    ops += 1
+    return False,ops
+  if(len(T) == 1) :
+    ops += 1 
+    if x == T[0]:
+      ops += 1 
+      return False,ops 
+    else:
+      return False,ops 
+
+  while(T[bas]<=x and T[haut]>= x): #T[bas] <= x <= T[haut]
+    m = (bas+haut)//2
+    ops += 2
+    if x <= T[m]: # <- fait qu'on renvoie la première occurrence
+      ops += 1 
+      haut = m    #T[bas] <= x <= T[haut]
+    elif x>= T[m]:
+      ops += 1 
+      bas = m     #T[bas] <= x <= T[haut]
+    if(haut-bas)<=1:  #T[bas] <= x <= T[haut]
+      ops += 1 
+      if T[bas] == x :
+        ops += 1
+        return bas,ops
+      elif T[haut] == x:
+        ops += 1  
+        return haut,ops 
+      else : return False,ops 
+
+
+
+
+############################################################
+# Exercice 2.5
+#
+# Compte les occurrences de x dans T par recherche dichotomique
+#
+
+def occurrenceDichotomie(T,x):
+    nb = 0
+    index = trouvePremier(T,x,debut=0)
+
+    if len(T) == 0:
+        return 0
+    if index == len(T):
+        return 1
+    for i in range (len(T)-index):
+        if T[index+i] == x:
+            nb += 1
+    return nb
+
+############################################################
+# Exercice 2.5
+#
+# Compte les occurrences de x dans T par recherche dichotomique
+#     et le nombre d'opérations
+#
+
+def occurrenceDichotomieOps(T, x) :
+  # A REMPLIR !!
+  nb = 0
+  ops = 0
+
+  index,ops = trouvePremierOps(T,x,debut=0)
+
+  if len(T) == 0 :
+      ops += 1
+      return 0,ops
+  if index == len(T) :
+      pos += 1
+      return 1,ops
+  ops += 2
+  for i in range(len(T) - index):
+      if T[index+i] == x:
+          nb += 1
+      ops += 1
+  
+  return nb,ops
+
+
+
+############################################################
+# TESTS - À COMPLETER 
+#
+
+def prettyT(T):
+  return str(T) if len(T)<20 else str(T[:20])[:-3]+"...]"
+
+
+############################################################
+#
+# Tests :
+#
+
+
+def test_trouveData() :
+  return [[[1,2,3,4], 2, True],
+          [[1,2,4,5] , 3, False]]
+
+
+
+def test_trouve () :
+  print('Test trouve:')
+  score = 0
+  data = test_trouveData()
+  ldata = len(data)
+  for i, dt in enumerate(data):
+    print('** test %d/%d : ' % (i + 1, ldata), end='')
+    
+    T = dt[0]
+    x = dt[1]
+    ref = dt[2]
+    res = trouve(T,x)
+    if res == ref :
+        score += 1
+        print('ok')
+    else :
+      print('ECHEC')
+      print('    entree  : %s x=%d' % (prettyT(T),x))
+      print('    compte  : %d' % res)
+      print('    attendu : %d' % ref)
+  print('* Score : %d/%d\n' % (score, ldata))
+
+
+############################################################
+#
+# Tests : trouveOps
+#
+
+
+def test_trouveOpsData():  
+  return [[[1,2,3,4,5], 2, True, 3],
+          [[1,2,2,4,5,7,10,11,11,12,14,14,15,15,20], 6, False, 9]]
+
+
+
+
+def test_trouveOps () :
+  print('Test trouveOps:')
+  score = 0
+  data = test_trouveOpsData()
+  ldata = len(data)
+  for i, dt in enumerate(data):
+    print('** test %d/%d : ' % (i + 1, ldata), end='')
+    
+    T = dt[0]
+    x = dt[1]
+    ref = dt[2]
+    refOps = dt[3]
+    res,ops = trouveOps(T,x)
+    if res == ref  and refOps <= ops:
+        score += 1
+        print('ok')
+    else :
+      print('ECHEC')
+      print('    entree  : %s x=%d' % (prettyT(T),x))
+      print('    trouve  : %s (en %d ops)' % (str(res),ops))
+      print('    attendu : %s (en au moins %d ops)' % (str(ref),refOps))
+  print('* Score : %d/%d\n' % (score, ldata))
+
+
+    
+############################################################
+#
+# Tests : trouvePremier
+#
+
+def test_trouvePremierData():
+  return [[[1],1,0],
+          [[1]+[2]*100000,1,0],
+          [[1]+[2]*100000,2,1]]
+    
+
+def test_trouvePremier () :
+  print('Test trouvePremier:')
+  score = 0
+  data = test_trouvePremierData()
+  ldata = len(data)
+  for i, dt in enumerate(data):
+    print('** test %d/%d : ' % (i + 1, ldata), end='')
+    
+    T = dt[0]
+    x = dt[1]
+    ref = dt[2]
+    res = trouvePremier(T,x)
+    if res == ref :
+        score += 1
+        print('ok')
+    else :
+      print('ECHEC')
+      print('    entree  : %s x=%d' % (prettyT(T),x))
+      print('    trouve  : %s' % str(res))
+      print('    attendu : %s' % str(ref))
+  print('* Score : %d/%d\n' % (score, ldata))
+
+
+from math import log,floor
+
+def test_trouvePremierOps () :
+  print('Test trouvePremierOps:')
+  score = 0
+  data = test_trouvePremierData()
+  ldata = len(data)
+  for i, dt in enumerate(data):
+    print('** test %d/%d : ' % (i + 1, ldata), end='')
+    T = dt[0]
+    x = dt[1]
+    ref = dt[2]
+    res,ops = trouvePremierOps(T,x)
+    logLen = floor(log(max(len(T),2),2))
+    if res == ref and (len(T)<2 or logLen<=ops<=6*(logLen+1)):
+        score += 1
+        print('ok')
+    else :
+      print('ECHEC')
+      print('    entree  : %s x=%d' % (prettyT(T),x))
+      print('    trouve  : %s (en %d ops)' % (str(ref),ops))
+      if ops<logLen:
+        print('    attendu : %s (en au moins %d ops)' % (str(ref),logLen))
+      else :
+        print('    attendu : %s (moins de %d ops)' % (str(ref),5*logLen))
+  print('* Score : %d/%d\n' % (score, ldata))
+
+def test_occurrenceDichotomieData():
+  return [[[1],1,1],
+          [[1,2,2,3,3,4,4,4,5],3,2],
+          [[1,2,2,3,3,4,4,4,5],1,1],
+          [[1,2,2,3,3,4,4,4,5],0,0],
+          [[],12,0],
+          [[1]*1000+[2],1,1000],
+          [[1]+[2]*100000,2,100000],
+          [[1]+[2]*100000,1,1],
+          [[i for i in range(10)],4,1]]
+#          [[i for i in range(1,10**5,2)],42*42,False]]
+    
+
+def test_occurrenceDichotomie () :
+  print('Test occurrenceDichotomie:')
+  score = 0
+  data = test_occurrenceDichotomieData()
+  ldata = len(data)
+  for i, dt in enumerate(data):
+    print('** test %d/%d : ' % (i + 1, ldata), end='')
+    
+    T = dt[0]
+    x = dt[1]
+    ref = dt[2]
+    res = occurrenceDichotomie(T,x)
+    if type(res)==type(ref) and res == ref :
+        score += 1
+        print('ok')
+    else :
+      print('ECHEC')
+      print('    entree  : %s x=%d' % (prettyT(T),x))
+      print('    trouve  : %s' % str(res))
+      print('    attendu : %s' % str(ref))
+  print('* Score : %d/%d\n' % (score, ldata))
+  
+
+
+def occurrenceDichotomieOpsData():
+    return [[[1],1,8],
+          [[1,2,2,3,3,4,4,4,5],3,27],
+          [[1,2,2,3,3,4,4,4,5],1,32],
+          [[1,2,2,3,3,4,4,4,5],0,34],
+          [[],12,2],
+          [[1]*1000+[2],1,63],
+          [[1]+[2]*100000,2,102],
+          [[1]+[2]*100000,1,136],
+          [[i for i in range(10)],4,28]]
+    
+
+def test_occurrenceDichotomieOps() :
+  print('Test occurrenceDichotomieOps:')
+  score = 0
+  data = occurrenceDichotomieOpsData()
+  ldata = len(data)
+  for i, dt in enumerate(data):
+    print('** test %d/%d : ' % (i + 1, ldata), end='')
+    
+    T = dt[0]
+    x = dt[1]
+    opsdata = dt[2]
+    res,ops = occurrenceDichotomieOps(T,x)
+    if type(ops)==type(opsdata) and ops == opsdata :
+        score += 1
+        print('ok')
+    else :
+      print('ECHEC')
+      print('    entree  : %s x=%d' % (prettyT(T),x))
+      print('    trouve  : %s' % str(ops))
+      print('    attendu : %s' % str(opsdata))
+  print('* Score : %d/%d\n' % (score, ldata))  
+
+if __name__ == '__main__':
+  test_trouve()
+  test_trouveOps()
+  test_trouvePremier()
+  test_trouvePremierOps()
+

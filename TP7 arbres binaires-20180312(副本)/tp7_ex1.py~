@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+
+from tp7 import *
+
+#
+# A COMPLETER !
+#
+def estVide(arbre) :
+  ''' teste si l'arbre est vide '''
+  return False
+  
+#
+# A COMPLETER !
+#
+def etiquette(arbre, i) :
+  ''' retourne l'etiquette (ou None) '''
+  return None
+  
+#
+# A COMPLETER !
+#
+def filsGauche(arbre, i) :
+  ''' retourne l'indice du fils gauche (ou None) '''
+  return None
+  
+#
+# A COMPLETER !
+#
+def filsDroit(arbre, i) :
+  ''' retourne l'indice du fils droit (ou None) '''
+  return None
+  
+#
+# A COMPLETER !
+#
+def pere(arbre, i) :
+  ''' retourne l'indice du pere (ou None) '''
+  return None
+  
+#
+# A COMPLETER !
+#
+def estRacine(arbre, i) :
+  ''' teste si i est l'indice de la racine '''
+  return False
+  
+#
+# A COMPLETER !
+#
+def estFilsGauche(arbre, i) :
+  ''' teste si i est le fils gauche de son pere '''
+  return False
+  
+#
+# A COMPLETER !
+#
+def estFilsDroit(arbre, i) :
+  ''' teste si i est le fils droit de son pere '''
+  return False
+  
+#
+# A COMPLETER !
+#
+def estFeuille(arbre, i) :
+  ''' teste si i est l'indice d'une feuille '''
+  return False
+
+#
+# A COMPLETER !
+#
+def testResults() :
+  return [[estVide, (arbreVide, True), (arbreVideComplet, True)],
+          [etiquette, (arbreVide, 1, None), (arbreFilGauche, 1, 'b')]
+	  ]
+
+
+#
+# NE PAS MODIFIER
+#
+
+def testAll() :
+  tst = testResults()
+
+  for fname, *tests in tst :
+    score = 0
+    print('Test %s :' % fname.__name__)
+    for j, test in enumerate(tests) :
+      *farg, fres = test
+      print (' - test %d/%d : ' % (j + 1, len(tests)), end='')
+      res = fname(*farg)
+      if (res == fres) :
+        print(' ok')
+        score += 1
+      else :
+        print(" échec sur", *farg)
+        print("\t résultat obtenu :", res, end='')
+        print(" <> attendu :", fres)
+    print ('  score %d/%d ' % (score, len(tests)))
+	
+    
+if __name__ == '__main__':
+  testAll()

@@ -1,0 +1,241 @@
+#!/usr/bin/env python3
+
+import random
+from time import clock
+import matplotlib.pyplot as plt
+
+# Exercice 1
+
+def trouveLePlusPetit(T):
+    min = T[0]
+    indice = 0
+    for i in range(len(T)):
+        if T[i] <= min :
+            min = T[i]
+            indice = i
+    return indice
+
+def triSelection(T):
+    # A COMPLETER
+    tmp = 0
+    ind = 0
+    for i in range(len(T)):
+        ind = trouveLePlusPetit(T[i:])+i
+        tmp = T[i]
+        T[i] = T[ind]
+        T[ind] = tmp
+    return T
+
+def randomPerm(n):
+    # A COMPLETER
+    T = [0]*n
+    for i in range(n):
+        T[i] = i+1
+    for i in range(len(T)):
+        ind = random.randint(i+1,len(T)) - 1
+        tmp = T[i]
+        T[i] = T[ind]
+        T[ind] = tmp
+    return T
+
+def testeQueLaFonctionTrie(f):
+    # A COMPLETER
+    T = []
+    for i in range(2,100):
+        T = randomPerm(i)
+        Tcop = T[:]
+        T = f(T)
+        for j in range(i):
+            if (T[j] != (j+1)):
+                print(Tcop)
+                print(T)
+                return False
+    return True
+
+
+
+def randomTab(n,a,b):
+    # A COMPLETER
+    T = []
+    for i in range(n):
+        T.append(random.randint(a,b))
+
+    return T
+
+def derangeUnPeu(n,k,rev):
+    # A COMPLETER
+    T = []
+    if rev == False:
+        for i in range(n):
+            T.append(i+1)
+    else:
+        for i in range(n,0,-1):
+            T.append(i+1)
+    for j in range(k):
+        p1 = random.randint(0,n-1)
+        p2 = random.randint(0,n-1)
+        tmp = T[p1]
+        T[p1] = T[p2]
+        T[p2] = tmp
+
+    return T
+
+# Exercice 2
+
+def echange(a,b):
+    tmp = a
+    a = b
+    b = tmp 
+
+def triInsertionEchange(T):
+    # A COMPLETE
+    # 把表格看做两个部分，左边是已经排序的区域，右边是未排序区域，代码每次运行都选右边第一个，把它安插到
+    # 已排序的区域，然后找到他应该在的位置，而且是在左侧区域中从后到前一个个换。
+
+    for i in range(len(T)):
+        for g in range(i-1,-1,-1):
+            if T[g] >= T[g+1]:
+                tmp = T[g]
+                T[g] = T[g+1]
+                T[g+1] = tmp
+            else:
+                break
+    return T
+
+def triInsertionRotation(T):
+    # A COMPLETER
+    # 方法与上边置换方法一样，只不过是通过找到应该插入左侧区域的位置，然后减少操作量
+
+    if len(T) == 0:
+        return None
+    for i in range(len(T)):
+        for g in range(i):
+            if T[g] > T[i]:
+                tmp = T[i]
+                for j in range(i,g,-1):
+                    T[j] = T[j-1]
+                T[g] = tmp
+                break
+    return T
+####################################################
+# Trie Rapide -- TP6                               #
+####################################################
+
+def partition(T):
+    # les éléments sont supposés destincts
+    pivot = T[0]
+    gauche = [elt for elt in T if elt < pivot]
+    droite = [elt for elt in T if elt > pivot]
+
+    return pivot, gauche, droite
+
+def triInsertionRapide(T):
+    # A COMPLETER
+    # 有pivot
+
+    if len(T) < 2:
+        return T
+    pivot, gauche, droite = partition(T)
+    return triInsertionRapide(gauche) + [pivot] + triInsertionRapide(droite)
+
+def partitionEnPlace(T, debut, fin):
+
+    if fin - debut  == 2 and T[debut] < T[debut+1]:
+        return debut+1
+    pivot, gauche, droite = T[debut], debut + 1, fin - 1
+
+    while gauche <= droite : 
+        if T[gauche] < pivot : gauche += 1
+        elif T[droite] > pivot : droite -= 1
+        else : T[gauche], T[droite] = T[droite], T[gauche]
+    T[debut], T[droite] = T[droite], pivot
+    return droite
+
+def triInsertionRapideEnPlace(T,debut,fin):
+    if fin - debut < 2: return 
+    
+    indice_pivot = partitionEnPlace(T, debut, fin)
+    triInsertionRapideEnPlace(T,debut, indice_pivot) 
+    triInsertionRapideEnPlace(T,indice_pivot + 1,fin)
+
+def fusion(L1,L2):
+    if len(L1) == 0: return L2
+    elif len(L2) == 0: return L1
+    elif L1[0] < L2[0]:
+        return [L1[0]] + fusion(L1[1:],L2)
+    else:
+        return [L2[0]] + fusion(L1,L2[1:])
+
+def triFusion(T) :
+    # A COMPLETER
+    if len(T)<2: return T
+    else:
+        milieu = len(T)//2
+        gauche = triFusion(T[:milieu])
+        droite = triFusion(T[milieu:])
+    return fusion(gauche,droite)
+    
+def triBulles(T) :
+    # A COMPLETER
+    return T
+
+
+##############################################################
+#
+# Mesure du temps
+#
+
+def mesure(algo, T) :
+    debut = clock()
+    algo(T)
+    return clock() - debut
+
+def mesureMoyenne(algo, tableaux) :
+  return sum([ mesure(algo, t[:]) for t in tableaux ]) / len(tableaux)
+
+couleurs = ['b', 'g', 'r', 'm', 'c', 'k', 'y', '#ff7f00', '.5', '#00ff7f', '#7f00ff', '#ff007f', '#7fff00', '#007fff' ]
+marqueurs = ['o', '^', 's', '*', '+', 'd', 'x', '<', 'h', '>', '1', 'p', '2', 'H', '3', 'D', '4', 'v' ]
+
+def courbes(algos, tableaux, styleLigne='-') :
+  x = [ t[0] for t in tableaux ]
+  for i, algo in enumerate(algos) :
+    print('Mesures en cours pour %s...' % algo.__name__)
+    y = [ mesureMoyenne(algo, t[1]) for t in tableaux ]
+    plt.plot(x, y, color=couleurs[i%len(couleurs)], marker=marqueurs[i%len(marqueurs)], linestyle=styleLigne, label=algo.__name__)
+
+def affiche() :
+  plt.xlabel('taille du tableau')
+  plt.ylabel('temps d\'execution')
+  plt.legend(loc='upper left')
+  plt.show()
+  
+##############################################################
+#
+# Main
+#
+
+if __name__ == '__main__':
+  # LIGNE A COMPLETER
+  algos = [] # chaque case contient un algorithme de tri différent
+  for tri in algos :
+      if testeQueLaFonctionTrie(tri):
+          print(tri.__name__ + ": OK")
+      else:
+          print(tri.__name__ + ": échoue")
+  taille = 1000 # taille maximale des tableaux à trier
+  pas = 100 # pas entre les tailles des tableaux à trier
+  ech = 5 # taille de l'échantillon pris pour faire la moyenne
+  print()
+  print("Comparaison à l'aide de randomPerm")
+  tableaux = [[i, [randomPerm(i) for j in range(ech)]] for i in range(2, taille, pas)]
+  courbes(algos, tableaux, styleLigne='-')
+  affiche()
+  print()
+  print("Comparaison à l'aide de randomTab")
+  # A COMPLETER
+  print()
+  print("Comparaison à l'aide de derangeUnPeu (rev = False)")
+  # A COMPLETER
+  print()
+  print("Comparaison à l'aide de derangeUnPeu (rev = True)")
+  # A COMPLETER
